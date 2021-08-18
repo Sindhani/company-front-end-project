@@ -14,6 +14,7 @@
                 <div class="signin-form">
                     <h2 class="form-title">Sign in</h2>
                     <form method="POST" action="{{ route('login') }}" class="register-form" id="login-form">
+                        @csrf
                         <div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="email" id="your_name" placeholder="Email address" value="{{old('email')}}"/>
@@ -25,7 +26,7 @@
                         </div>
                         <div class="form-group">
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                            <input type="password" name="password" id="your_pass" placeholder="Password"/>
                             @error('password')
                             <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

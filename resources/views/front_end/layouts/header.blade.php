@@ -5,7 +5,8 @@
             <div class="d-flex menu-wrap">
                 <div id="mainmenu" class="mainmenu">
                     <ul class="nav">
-                        <li><a data-scroll class="nav-link active" href="#home">Home<span class="sr-only">(current)</span></a>
+                        <li><a data-scroll class="nav-link active" href="#home">Home<span
+                                        class="sr-only">(current)</span></a>
                             <ul>
                                 <li><a href="index.html">Home 01</a></li>
                                 <li><a href="index-2.html">Home 02</a></li>
@@ -30,7 +31,11 @@
                     </ul>
                 </div>
                 <div class="header-right">
-                    <a class="menu-btn anim-btn" href="{{route('login')}}">Get Started<span></span></a>
+                    @if(auth()->check())
+                        <a class="menu-btn anim-btn" href="{{route('home')}}">Dashboard<span></span></a>
+                    @else
+                        <a class="menu-btn anim-btn" href="{{route('login')}}">Get Started<span></span></a>
+                    @endif
                 </div>
             </div>
         </nav>

@@ -26,7 +26,7 @@ class SubscriptionController extends Controller
      */
     public function create(Request $request)
     {
-        $package = Package::find(Crypt::decryptString($request->id));
+        $package = Package::where('id',Crypt::decryptString($request->id))->first();
         return view('back_end.subscriptions.create', compact('package'));
 
     }
@@ -34,13 +34,21 @@ class SubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+
+        if (auth()->user()->subscription->first()) {
+            $package = Package::find((int)Crypt::decryptString($request->package))->first();
+            Subscription::where('user_id', auth()->user()->id)
+                ->update(['package_id' => Crypt::decryptString($request->package)]);
+            return redirect()->route('home');
+        }
+
         $package = Package::find(Crypt::decryptString($request->package))->first();
-        Subscription::updateOrCreate(['user_id' => auth()->user()->id, 'package_id' => $package->id]);
+        Subscription::updateOrCreate(['user_id' => auth()->user()->id, 'package_id' => Crypt::decryptString($request->package)]);
         return redirect()->route('home');
 
     }
@@ -48,7 +56,7 @@ class SubscriptionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Subscription  $subscription
+     * @param  \App\Models\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
     public function show(Subscription $subscription)
@@ -59,7 +67,7 @@ class SubscriptionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Subscription  $subscription
+     * @param  \App\Models\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
     public function edit(Subscription $subscription)
@@ -70,8 +78,8 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Subscription  $subscription
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Subscription $subscription)
@@ -82,7 +90,7 @@ class SubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Subscription  $subscription
+     * @param  \App\Models\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
     public function destroy(Subscription $subscription)
