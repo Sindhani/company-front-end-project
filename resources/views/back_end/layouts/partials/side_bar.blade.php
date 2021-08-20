@@ -25,6 +25,7 @@
             </ul>
         </li>
         <li class="menu-label">Packages</li>
+        @can('manage-packages')
         <li>
             <a href="{{route('packages.index')}}">
                 <div class="parent-icon icon-color-2"><i class="bx bx-upload"></i>
@@ -32,6 +33,7 @@
                 <div class="menu-title">Manage Packages</div>
             </a>
         </li>
+        @endcan
         <li class="menu-label">Email Validator</li>
         <li>
             <a href="{{route('email-validator.create')}}">
