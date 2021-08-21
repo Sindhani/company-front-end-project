@@ -6,6 +6,8 @@
                 <div class="card-body">
                     <div class="card-title">
                         <h4 class="mb-0">Packages</h4>
+                        <hr>
+                        <a href="{{route('packages.create')}}"><i class="bx bxs-plus-square" style="font-size: 25px;"></i>New Package</a>
                     </div>
                     <hr>
                     <div class="table-responsive">

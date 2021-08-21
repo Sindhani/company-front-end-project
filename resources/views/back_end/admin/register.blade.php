@@ -7,7 +7,7 @@
                     <div class="card-title d-flex align-items-center">
                         <div><i class="bx bxs-user mr-1 font-24 text-danger"></i>
                         </div>
-                        <h4 class="mb-0 text-danger">Add New Client Details</h4>
+                        <h4 class="mb-0 text-danger">Confirm Your Order</h4>
                     </div>
                     <hr>
                     <form action="{{route('admin.login')}}" method="post">
@@ -31,6 +31,15 @@
                                                     class="bx bx-phone"></i></span>
                                     </div>
                                     <input type="email" class="form-control border-left-0" placeholder="Client email address" name="email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text bg-transparent"><i
+                                                    class="bx bx-phone"></i></span>
+                                    </div>
+                                    <input type="password" class="form-control border-left-0" placeholder="Enter your password" name="password">
                                 </div>
                             </div>
                             <div class="form-group">
