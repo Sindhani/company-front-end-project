@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Nette\Schema\Schema;
+use Shetabit\Visitor\Models\Visit;
 
 
 class AppServiceProvider extends ServiceProvider

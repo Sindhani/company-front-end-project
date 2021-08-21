@@ -36,6 +36,11 @@ class PackageController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'duration' => 'required|in:monthly,Yearly,Weekly',
+            'description' => 'required'
+        ]);
+
         $package = Package::create($request->except('description'));
         foreach ($request->description as $item){
             $package->description()->create(['description' => $item]);

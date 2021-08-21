@@ -21,7 +21,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    $request->visitor()->visit();
+
     return view('welcome');
 });
 
@@ -43,30 +45,54 @@ Route::get('registration/admin', function () {
 })->name('admin.register');
 
 Route::post('login/admin', function (Request $request) {
-    $request->merge(['server_mac' => exec('getmac')]);
-    $response = Http::get(env('API_UR', '127.0.0.1:8082/validate-user'), $request->all());
-//    dd($response->body());
-    if ($response->status() == 200) {
-        $user = User::where(['email' => $request->email, 'password' => $request->password])->first();
+    $request->validate([
+        'email' => 'required|email',
+        'name' => 'required',
+        'password' => 'required',
+        'purchase_code' => 'required',
+        'invoice_number' => 'required'
+    ]);
 
-        if ($user) {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                return redirect()->route('home');
-            }
-        } else {
+
+    $request->merge(['server_mac' => exec('getmac')]);
+    $response = Http::get(env('API_UR', '127.0.0.1:8000/validate-user'), $request->all());
+
+    if ($response->status() == 404) {
+        return back()->with(['error' => 'Record Not found! Enter valid credentials']);
+    }
+
+    if ($response->status() == 200) {
+        $user = User::where('email' , $request->email)->first();
+        if (!$user) {
             User::create([
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'is_admin' => 1,
-                'name' => $request->name
+                'name' => $request->name,
+                'token' => $response->body()
             ]);
             If (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 return redirect()->route('home');
 
             }
         }
+
+        if(!Hash::check($request->password, $user->password)){
+            return back()->with('error', 'Your password is incorrect! Enter a valid password');
+        }
+
+
+
+
+        if ($user) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                return redirect()->route('home');
+            }
+        }
+
         return redirect()->route('home');
     }
+    dd($response->body());
 
 })->name('admin.login');
 
