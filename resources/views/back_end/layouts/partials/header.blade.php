@@ -300,9 +300,9 @@
                             <img src="https://via.placeholder.com/110x110" class="user-img" alt="user avatar">
                         </div>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">	<a class="dropdown-item" href="javascript:;"><i
+                    <div class="dropdown-menu dropdown-menu-right">	<a class="dropdown-item" href="{{route('user-profile.edit', auth()->check() ? auth()->user()->id: null)}}"><i
                                     class="bx bx-user"></i><span>Profile</span></a>
-                        <a class="dropdown-item" href="javascript:;"><i
+                        <a class="dropdown-item" href="#"><i
                                     class="bx bx-cog"></i><span>Settings</span></a>
                         <a class="dropdown-item" href="javascript:;"><i
                                     class="bx bx-tachometer"></i><span>Dashboard</span></a>

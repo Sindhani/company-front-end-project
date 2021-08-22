@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,11 +34,23 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware('auth')->group(function () {
     Route::resource('subscription', SubscriptionController::class);
+    Route::resource('user-profile', \App\Http\Controllers\UserController::class);
     Route::resource('packages', PackageController::class);
     Route::post('import-file', [EmailValidatorController::class, 'import'])->name('import.file');
     Route::get('download-report/{q}', [EmailValidatorController::class, 'download'])->name('download-report');
     Route::resource('email-validator', EmailValidatorController::class);
 
+});
+
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('google')->redirect();
+});
+
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('google')->stateless()->user();
+    dd($user);
+
+    // $user->token
 });
 
 Route::get('registration/admin', function () {
