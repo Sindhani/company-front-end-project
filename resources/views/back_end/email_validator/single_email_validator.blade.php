@@ -40,6 +40,10 @@
                     @if(isset($error))
                         <h3>Invalid Email Address Syntax</h3>
                     @endif
+                    @if(isset($token_error))
+                        <h2 class="text-danger">{{$token_error}}</h2>
+                    @endif
+
                     @if(isset($result))
 
                         <table class="table table-bordered">

@@ -91,6 +91,9 @@ class EmailValidatorController extends Controller
 
         $response = $this->sendRequest(['token' => $this->token, 'email' => $request->email]);
         extract($response->json());
+        if(!empty($token_error)){
+            return view('back_end.email_validator.single_email_validator', compact('token_error'));
+        }
 
         return view('back_end.email_validator.single_email_validator', compact('email', 'result', 'account', 'domain'));
     }
