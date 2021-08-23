@@ -41,21 +41,21 @@
                         <h3>Invalid Email Address Syntax</h3>
                     @endif
                     @if(isset($result))
-                        @if($result[$email])
+
                         <table class="table table-bordered">
                             <tr>
                                 <td>Status</td>
-                                <td>{!! !Str::contains($result['mxrecord']['detail'], 'could not connect to') ? 'Valid': '<span class="text-danger">In-Valid</span>' !!}</td>
+                                <td>{!! $result[$email] ? 'Valid' : 'In-valid' !!}</td>
                                 <td>Sub-Status</td>
-                                <td>{!! !Str::contains($result['mxrecord']['detail'], 'could not connect to') ? '': '<span class="text-danger">mail_box_not_found</span>' !!}</td>
+                                <td>{!! !empty($err) ? $err: '' !!}</td>
                                 <td>Account</td>
-                                <td>{{$account}}</td>
+                                <td>{{$account  }}</td>
                             </tr>
                             <tr>
                                 <td>Domain</td>
                                 <td>{{$domain}}</td>
                                 <td>Disposable</td>
-                                <td>{{$result['dispossable']['detail']}}</td>
+                                <td></td>
                                 <td>Toxic</td>
                                 <td></td>
                             </tr>
@@ -70,35 +70,7 @@
 
                         </table>
 
-                        @else
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Status</td>
-                                <td>Email Not Exists</td>
-                                <td>Sub-Status</td>
-                                <td>Unkonw</td>
-                                <td>Account</td>
-                                <td>Unkownn</td>
-                            </tr>
-                            <tr>
-                                <td>Domain</td>
-                                <td>Not exits</td>
-                                <td>Disposable</td>
-                                <td>Unknown</td>
-                                <td>Toxic</td>
-                                <td>Unkonwn</td>
-                            </tr>
-                            <tr>
-                                <td>First Name</td>
-                                <td>Not Found</td>
-                                <td>Last Name</td>
-                                <td>Not Found</td>
-                                <td>Gender</td>
-                                <td>Unkonwn</td>
-                            </tr>
 
-                        </table>
-                        @endif
                     @endif
 
                 </div>

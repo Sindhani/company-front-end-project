@@ -7,16 +7,29 @@ use App\Events\FileImportEvent;
 use App\Exports\ReportExport;
 use App\Imports\EmailListImport;
 use App\Models\EmailValidationResult;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 use SMTPValidateEmail\Validator as SmtpEmailValidator;
+
 class EmailValidatorController extends Controller
 {
+    private $end_point;
+    private $token;
+
+    public function __construct()
+    {
+        $this->end_point = 'localhost:8080/api/email-validator/';
+        $this->token = User::token()->first();
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,6 +37,8 @@ class EmailValidatorController extends Controller
      */
     public function index()
     {
+
+
         $emails = EmailValidationResult::with('validated_emails')->get();
         return view('back_end/index');
 
@@ -67,26 +82,17 @@ class EmailValidatorController extends Controller
      */
     public function store(Request $request)
     {
+
+
         $validator = Validator::make($request->all(), ['email' => 'email']);
         if ($validator->fails()) {
             return view('back_end.email_validator.single_email_validator')->with('error', 1);
         }
-        $domain = substr(strrchr($request->email, "@"), 1);
-        $account = explode('@', $request->email)[0];
 
-        $email = 'someone@example.org';
-        $sender = 'waheed.eliccs@gmail.com';
-        $validator = new SmtpEmailValidator($request->email, $sender);
+        $response = $this->sendRequest(['token' => $this->token, 'email' => $request->email]);
+        extract($response->json());
 
-        // If debug mode is turned on, logged data is printed as it happens:
-//         $validator->debug = true;
-        $result = $validator->validate();
-        $log = $validator->log;
-
-//        $result = app(EmailChecker::class)->checkEmail($request->email, 'boolean');
-        $email = $request->email;
-
-        return view('back_end.email_validator.single_email_validator', compact('email','result', 'account', 'domain'));
+        return view('back_end.email_validator.single_email_validator', compact('email', 'result', 'account', 'domain'));
     }
 
     /**
@@ -136,24 +142,22 @@ class EmailValidatorController extends Controller
 
     public function import(Request $request)
     {
-        $headings = (new HeadingRowImport())->toArray($request->file('emails'));
-        $headings = Arr::flatten($headings);
-        if (!in_array('email', $headings)) {
-            return response()->json([
-                'success' => false,
-                'error' => "File doesn't contain email column, one should be provided, See File Format Section",
-                'errorcode' => 422
-            ]);
-        }
+        $end_point = 'localhost:8080/api/email-validator/';
+        $token = User::token()->first();
 
-        $emails = Excel::import(new EmailListImport, $request->emails);
-        FileImportEvent::dispatch($request->file('emails')->getClientOriginalName());
-        return response()->json(['success' => true]);
+
+
+        dd($response->body());
+        return $response->json();
     }
 
     public function download($q)
     {
         return Excel::download(new ReportExport($q), 'Validated_Emails_Report.csv');
+    }
+
+    private function sendRequest($data){
+        return $response = Http::post($this->end_point, $data);
     }
 
 

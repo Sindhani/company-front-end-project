@@ -1,6 +1,5 @@
 @extends('front_end.master')
 @section('contents')
-
     <section id="home" class="hero-section hero-3 hero-4">
         <div class="container pos-rel">
             <div class="row align-items-center">
@@ -316,3 +315,12 @@
         </div>
     </section><!--/. cta-section -->
 @endsection
+@section('scripts')
+    <script>
+        $(function () {
+            if("{{session('message')}}"){
+                swal('alert', "{{session('message')}}","info");
+            }
+        })
+    </script>
+    @endsection

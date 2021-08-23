@@ -24,7 +24,6 @@ use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', function (Request $request) {
     $request->visitor()->visit();
-
     return view('welcome');
 });
 
@@ -53,11 +52,8 @@ Route::get('/auth/callback', function () {
     // $user->token
 });
 
-Route::get('registration/admin', function () {
-    return view('back_end.admin.register');
-})->name('admin.register');
-
-Route::post('login/admin', function (Request $request) {
+Route::view('client-registration', 'back_end.admin.register')->name('admin.register')->middleware('check-client');
+Route::post('client-login', function (Request $request) {
     $request->validate([
         'email' => 'required|email',
         'name' => 'required',
@@ -68,7 +64,7 @@ Route::post('login/admin', function (Request $request) {
 
 
     $request->merge(['server_mac' => exec('getmac')]);
-    $response = Http::get(env('API_UR', '127.0.0.1:8000/validate-user'), $request->all());
+    $response = Http::get(env('API_UR', '127.0.0.1:8080/validate-user'), $request->all());
 
     if ($response->status() == 404) {
         return back()->with(['error' => 'Record Not found! Enter valid credentials']);
@@ -82,7 +78,9 @@ Route::post('login/admin', function (Request $request) {
                 'password' => Hash::make($request->password),
                 'is_admin' => 1,
                 'name' => $request->name,
-                'token' => $response->body()
+                'token' => $response->body(),
+                'purchase_code' => $request->purchase_code,
+                'invoice_number' => $request->invoice_number
             ]);
             If (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 return redirect()->route('home');

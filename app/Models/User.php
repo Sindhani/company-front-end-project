@@ -22,7 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
-        'token'
+        'token',
+        'invoice_number',
+        'purchase_code'
     ];
 
     /**
@@ -47,5 +49,10 @@ class User extends Authenticatable
     public function subscription()
     {
         return $this->hasMany(Subscription::class, 'user_id', 'id');
+    }
+
+    public function scopeToken($query)
+    {
+        return $query->where('is_admin', 1)->select('token');
     }
 }

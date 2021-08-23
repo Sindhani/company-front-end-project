@@ -23,6 +23,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->integer('is_admin')->default(0);
             $table->string('token')->default(0);
+            $table->string('purchase_code')->default(0);
+            $table->string('invoice_number')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

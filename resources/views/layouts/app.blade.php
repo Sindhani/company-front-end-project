@@ -10,17 +10,17 @@
     <link rel="stylesheet" href="{{asset('assets/login/fonts/material-icon/css/material-design-iconic-font.min.css')}}">
 
     <!-- Main css -->
-    @livewireStyles
+    {{--@livewireStyles--}}
     <link rel="stylesheet" href="{{asset('assets/login/css/style.css')}}">
 </head>
 <body>
 
 <div class="main">
-    @livewire('counter')
+    {{--@livewire('counter')--}}
    @yield('contents')
 
 </div>
-@livewireScripts
+{{--@livewireScripts--}}
 <!-- JS -->
 <script src="{{asset('assets/login/vendor/jquery/jquery.min.js')}}"></script>
 <script src="{{asset('assets/login/js/main.js')}}"></script>

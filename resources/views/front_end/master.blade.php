@@ -26,7 +26,7 @@
         <link rel="stylesheet" href="{{asset('assets/front_end/css/venobox.min.css')}}">
         <link rel="stylesheet" href="{{asset('assets/front_end/css/main.css')}}">
         <link rel="stylesheet" href="{{asset('assets/front_end/css/responsive.css')}}">
-
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script src="{{asset('assets/front_end/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js')}}"></script>
     </head>
     <body data-spy="scroll" data-target="#mainmenu" data-offset="70">
@@ -58,6 +58,6 @@
         <script src="{{asset('assets/front_end/js/vendor/wow.min.js')}}"></script>
         <script src="{{asset('assets/front_end/js/vendor/venobox.min.js')}}"></script>
         <script src="{{asset('assets/front_end/js/main.js')}}"></script>
-
+        @yield('scripts')
     </body>
 </html>
