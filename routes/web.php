@@ -54,6 +54,7 @@ Route::get('/auth/callback', function () {
 
 Route::view('client-registration', 'back_end.admin.register')->name('admin.register')->middleware('check-client');
 Route::post('client-login', function (Request $request) {
+
     $request->validate([
         'email' => 'required|email',
         'name' => 'required',
@@ -61,16 +62,18 @@ Route::post('client-login', function (Request $request) {
         'purchase_code' => 'required',
         'invoice_number' => 'required'
     ]);
-
-
     $request->merge(['server_mac' => exec('getmac')]);
-    $response = Http::get(env('API_UR', '127.0.0.1:8080/validate-user'), $request->all());
-
-    if ($response->status() == 404) {
+    $url = "https://email-validator.habdsk.org/email/public/validate-user";
+//    $url = "192.168.88.69:8082/email-validator-project/public/api/validate-user";
+    $response = sendRequest($request, $url);
+    if($response['responseCode'] == 404){
         return back()->with(['error' => 'Record Not found! Enter valid credentials']);
     }
 
-    if ($response->status() == 200) {
+//    if ($response->status() == 404) {
+//        return back()->with(['error' => 'Record Not found! Enter valid credentials']);
+//    }
+    if ($response['responseCode'] == 200) {
         $user = User::where('email' , $request->email)->first();
         if (!$user) {
             User::create([
@@ -78,7 +81,7 @@ Route::post('client-login', function (Request $request) {
                 'password' => Hash::make($request->password),
                 'is_admin' => 1,
                 'name' => $request->name,
-                'token' => $response->body(),
+                'token' => $response['response']['api_token'],
                 'purchase_code' => $request->purchase_code,
                 'invoice_number' => $request->invoice_number
             ]);
@@ -91,10 +94,6 @@ Route::post('client-login', function (Request $request) {
         if(!Hash::check($request->password, $user->password)){
             return back()->with('error', 'Your password is incorrect! Enter a valid password');
         }
-
-
-
-
         if ($user) {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 return redirect()->route('home');
@@ -103,7 +102,65 @@ Route::post('client-login', function (Request $request) {
 
         return redirect()->route('home');
     }
-    dd($response->body());
+//    if ($response->status() == 200) {
+//        $user = User::where('email' , $request->email)->first();
+//        if (!$user) {
+//            User::create([
+//                'email' => $request->email,
+//                'password' => Hash::make($request->password),
+//                'is_admin' => 1,
+//                'name' => $request->name,
+//                'token' => $response->body(),
+//                'purchase_code' => $request->purchase_code,
+//                'invoice_number' => $request->invoice_number
+//            ]);
+//            If (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+//                return redirect()->route('home');
+//
+//            }
+//        }
+//
+//        if(!Hash::check($request->password, $user->password)){
+//            return back()->with('error', 'Your password is incorrect! Enter a valid password');
+//        }
+//
+//
+//
+//
+//        if ($user) {
+//            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+//                return redirect()->route('home');
+//            }
+//        }
+//
+//        return redirect()->route('home');
+//    }
+
 
 })->name('admin.login');
+/**
+ * @param Request $request
+ * @param $url
+ * @return mixed
+ */
+function sendRequest(Request $request, $url)
+{
+
+    $ch = curl_init();
+    $data = http_build_query($request->all());
+    $getUrl = $url . "?" . $data;
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_URL, $getUrl);
+    curl_setopt($ch, CURLOPT_HEADER, false);    // we want headers
+    curl_setopt($ch, CURLOPT_TIMEOUT, 80);
+    $response = curl_exec($ch);
+    $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return ['response' => json_decode($response,true), 'responseCode' => $responseCode];
+
+}
 

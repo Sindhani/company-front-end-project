@@ -25,7 +25,7 @@ class EmailValidatorController extends Controller
 
     public function __construct()
     {
-        $this->end_point = 'localhost:8080/api/email-validator/';
+        $this->end_point = 'https://email-validator.habdsk.org/email/public/api/email-validator/';
         $this->token = User::token()->first();
 
     }
